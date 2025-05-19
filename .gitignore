@@ -5,7 +5,7 @@ __pycache__/
 
 # C extensions
 
-faiss/
+
 *.so
 
 # Distribution / packaging
@@ -19,6 +19,7 @@ eggs/
 lib/
 lib64/
 parts/
+faiss/
 sdist/
 var/
 wheels/
