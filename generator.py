@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from retriever import LegalRetriever
 from openai import OpenAI
+from rerank import Reranker
 
 load_dotenv()
 
@@ -14,11 +15,13 @@ model_name = os.getenv("OPENAI_MODEL", "deepseek-chat")
 
 class LegalRAG_Generator:
     def __init__(self, index_path="./faiss/index.faiss"):
-        print("🔄 Đang khởi tạo retriever và client DeepSeek...")
+        print("🔄 Đang khởi tạo retriever...")
         self.retriever = LegalRetriever(index_path=index_path)
+        self.reranker = Reranker(top_k=3)
 
     def generate_answer(self, question, top_k=3):
         docs = self.retriever.retrieve(question, top_k=top_k)
+        docs = self.reranker.rerank(question, docs)
         context = "\n\n".join(list({doc['text'] for doc in docs}))[:2000]
         print(context)
 
