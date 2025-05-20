@@ -63,4 +63,4 @@ preprocess_data.py~
 retriever.py~
 
 # Ignore faiis folder if it's temporary
-faiis/
+faiss/
