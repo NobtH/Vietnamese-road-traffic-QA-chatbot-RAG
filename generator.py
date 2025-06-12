@@ -17,18 +17,25 @@ class LegalRAG_Generator:
     def __init__(self, index_path="./faiss/index.faiss"):
         print("🔄 Đang khởi tạo retriever...")
         self.retriever = LegalRetriever(index_path=index_path)
-        self.reranker = Reranker(top_k=3)
+        self.reranker = Reranker(top_k=10)
 
-    def generate_answer(self, question, top_k=3):
-        docs = self.retriever.retrieve(question, top_k=top_k)
+    def generate_answer(self, question, top_k=5):
+        docs = self.retriever.retrieve(question, top_k=10)
+        print("\n**************Context Origin***************\n")
+        print("\n\n".join(list({doc['text'] for doc in docs})))
         docs = self.reranker.rerank(question, docs)
-        context = "\n\n".join(list({doc['text'] for doc in docs}))[:2000]
+        print("\n**************Context after rerank******************\n")
+        print("\n\n".join(list({doc['text'] for doc in docs})))
+        top_docs = docs[:top_k]
+        context = "\n\n".join(list({doc['text'] for doc in top_docs}))
+        print("\n***********Final context******************\n")
         print(context)
 
         prompt = (
             f"Dưới đây là một số trích đoạn từ văn bản pháp luật Việt Nam:\n{context}\n\n"
             f"Câu hỏi: {question}\n"
             f"Hãy trả lời ngắn gọn và chính xác theo đúng nội dung trên."
+            f"Trong câu trả lời thêm cả phần trích dẫn nguồn của câu trả lời."
         )
 
         response = client.chat.completions.create(
