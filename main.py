@@ -21,9 +21,13 @@ class QuestionRequest(BaseModel):
 
 @app.post("/ask")
 def ask_question(payload: QuestionRequest):
-    question = payload.question
-    answer = rag.generate_answer(question)
-    return {"answer": answer}
+    try:
+        question = payload.question
+        answer = rag.generate_answer(question)
+        return {"answer": answer}
+    except Exception as e:
+        print("Error in /ask:", e)
+        return {"answer": "Lỗi hệ thống: " + str(e)}
 
 @app.get("/files")
 def list_files():

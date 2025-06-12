@@ -19,6 +19,8 @@ A legal question-answering system for Vietnamese road traffic laws using Retriev
 ```text
 User Question
       ↓
+Normalize Question
+      ↓
  Retriever (bi-encoder → FAISS search)
       ↓
  Reranker (cross-encoder)

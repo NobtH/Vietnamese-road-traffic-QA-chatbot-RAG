@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from retriever import LegalRetriever
 from openai import OpenAI
 from rerank import Reranker
+from normalize_question import QuestionNormalizer
 
 load_dotenv()
 
@@ -18,14 +19,21 @@ class LegalRAG_Generator:
         print("🔄 Đang khởi tạo retriever...")
         self.retriever = LegalRetriever(index_path=index_path)
         self.reranker = Reranker(top_k=10)
+        self.normalizer = QuestionNormalizer(model=model_name, client=client)
 
     def generate_answer(self, question, top_k=5):
+        question = self.normalizer.normalize_question(question)
+        print("\n**************Normalizes question*************\n")
+        print(question)
+
         docs = self.retriever.retrieve(question, top_k=10)
         print("\n**************Context Origin***************\n")
         print("\n\n".join(list({doc['text'] for doc in docs})))
+
         docs = self.reranker.rerank(question, docs)
         print("\n**************Context after rerank******************\n")
         print("\n\n".join(list({doc['text'] for doc in docs})))
+
         top_docs = docs[:top_k]
         context = "\n\n".join(list({doc['text'] for doc in top_docs}))
         print("\n***********Final context******************\n")
@@ -50,8 +58,8 @@ class LegalRAG_Generator:
 
         return response.choices[0].message.content
 
-# if __name__ == "__main__":
-#     rag = LegalRAG_Generator()
-#     question = "Mức phạt khi không đội mũ bảo hiểm là bao nhiêu?"
-#     print("❓", question)
-#     print("📝", rag.generate_answer(question))
+if __name__ == "__main__":
+    rag = LegalRAG_Generator()
+    question = "Tôi uống rượu lái xe máy thì làm sao"
+    print("❓", question)
+    print("📝", rag.generate_answer(question))
