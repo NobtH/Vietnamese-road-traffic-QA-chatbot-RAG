@@ -20,13 +20,13 @@ class QuestionNormalizer:
         prompt = (
             "Chuyển câu hỏi đời thường về giao thông thành một câu hỏi pháp luật rõ ràng, ngắn gọn, "
             "cụ thể hóa chủ thể, hành vi và tình huống nếu cần, dùng đúng ngôn ngữ hỏi trong luật giao thông. "
-            "Chỉ trả lại đúng 1 câu hỏi đã được chuẩn hóa, không thêm bất kỳ nhãn, chú thích, phân tích hoặc giải thích nào, không thay đổi các từ ngữ quan trọng"
+            "Chỉ trả lại đúng 1 câu hỏi đã được chuẩn hóa, không thêm bất kỳ nhãn, chú thích, phân tích hoặc giải thích nào, không thay đổi các từ ngữ quan trọng, ngắn nhất có thể"
             "không có từ 'Input', 'Output' trong kết quả.\n"
             "Ví dụ:\n"
-            "Người xe máy không đội mũ bảo hiểm thì làm sao\n"
-            "-> Người điều khiển xe máy không đội mũ bảo hiểm sẽ bị xử phạt thế nào\n"
+            "Ô tô vượt đèn đỏ thì làm sao\n"
+            "-> Người điều khiển xe ô tô không chấp hành đèn tín hiệu giao thông sẽ bị xử phạt thế nào\n"
             "Tôi lái xe máy trên cao tốc có làm sao không\n"
-            "-> Người điều khiển xe máy lưu thông trên đường cao tốc có vi phạm quy định của pháp luật giao thông đường bộ không?\n"
+            "-> Người điều khiển xe mô tô lưu thông trên đường cao tốc bị phạt thế nào?\n"
             f"{question}\n"
         )
         try:

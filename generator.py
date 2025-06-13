@@ -22,17 +22,14 @@ class LegalRAG_Generator:
         self.normalizer = QuestionNormalizer(model=model_name, client=client)
 
     def generate_answer(self, question, top_k=5):
-        question = self.normalizer.normalize_question(question)
+        print("\n****************start*********************\n")
+        norm_question = self.normalizer.normalize_question(question)
         print("\n**************Normalizes question*************\n")
-        print(question)
+        print(norm_question)
 
-        docs = self.retriever.retrieve(question, top_k=10)
-        print("\n**************Context Origin***************\n")
-        print("\n\n".join(list({doc['text'] for doc in docs})))
+        docs = self.retriever.retrieve(norm_question)
 
-        docs = self.reranker.rerank(question, docs)
-        print("\n**************Context after rerank******************\n")
-        print("\n\n".join(list({doc['text'] for doc in docs})))
+        docs = self.reranker.rerank(norm_question, docs)
 
         top_docs = docs[:top_k]
         context = "\n\n".join(list({doc['text'] for doc in top_docs}))
@@ -41,7 +38,7 @@ class LegalRAG_Generator:
 
         prompt = (
             f"Dưới đây là một số trích đoạn từ văn bản pháp luật Việt Nam:\n{context}\n\n"
-            f"Câu hỏi: {question}\n"
+            f"Câu hỏi: {norm_question}\n"
             f"Hãy trả lời ngắn gọn và chính xác theo đúng nội dung trên."
             f"Trong câu trả lời thêm cả phần trích dẫn nguồn của câu trả lời."
         )
@@ -53,13 +50,12 @@ class LegalRAG_Generator:
                 {"role": "user", "content": prompt}
             ],
             temperature=0.2,
-            max_tokens=512
         )
 
         return response.choices[0].message.content
 
 if __name__ == "__main__":
     rag = LegalRAG_Generator()
-    question = "Tôi uống rượu lái xe máy thì làm sao"
+    question = "Người điều khiển xe ô tô không chấp hành tín hiệu đèn giao thông sẽ bị xử phạt thế nào?"
     print("❓", question)
     print("📝", rag.generate_answer(question))
